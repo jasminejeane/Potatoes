@@ -25,6 +25,16 @@ var express = require("express"),
       console.log('Connected to the sqlite database.');
     });
 
+
+    let sql = `SELECT name FROM artists`;
+
+    db.all(sql,[],(err, rows ) => {
+        // process rows here
+        if (err) {
+   throw err;
+ }
+        console.log(rows);
+    });
     // db.serialize(() => {
     //   db.each(`SELECT PlaylistId as id,
     //                   Name as name
@@ -36,12 +46,12 @@ var express = require("express"),
     //   });
     // });
 
-    db.close((err) => {
-      if (err) {
-        console.error(err.message);
-      }
-      console.log('Close the database connection.');
-    });
+    // db.close((err) => {
+    //   if (err) {
+    //     console.error(err.message);
+    //   }
+    //   console.log('Close the database connection.');
+    // });
 
 
 
