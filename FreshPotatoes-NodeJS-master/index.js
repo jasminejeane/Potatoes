@@ -35,10 +35,10 @@ request("https://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe91
   // If the request is successful (i.e. if the response status code is 200)
   if (!error && response.statusCode === 200) {
 
-    // A minimum of 5 reviews
     var reviews = JSON.parse(body)[0].reviews,
         average = 0,
         newAverage;
+    // criteria -  A minimum of 5 reviews
     if (reviews.length >= 5) {
 
       for (var i = 0; i < reviews.length; i++) {
@@ -47,6 +47,10 @@ request("https://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe91
       }
       newAverage = average / reviews.length;
       console.log("average", newAverage.toFixed(1));
+    }
+    // criteria -  greater than 4.0
+    if(newAverage > 4.0){
+      console.log(newAverage)
     }
   }
 });
