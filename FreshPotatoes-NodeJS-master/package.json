@@ -2,7 +2,7 @@
   "name": "fresh-potatoes",
   "version": "1.0.0",
   "description": "Your freshest place for film-related data",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
     "preinstall": "node -v | grep v6 || (echo 'Please update Node.js to v6. Other versions are not supported' && exit 1)",
     "start": "nodemon --ignore spec/ index.js",

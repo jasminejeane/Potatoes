@@ -18,6 +18,18 @@ var express = require("express"),
     app.use(jsonParser());
 
 
+// THIRD PARTY CONNECTION
+request("https://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=8", function(error, response, body) {
+
+      // If the request is successful (i.e. if the response status code is 200)
+      if (!error && response.statusCode === 200) {
+
+        // Parse the body of the site
+        console.log("movie: " + JSON.parse(body));
+      }
+    });
+
+// SQLITE CONNECTION
     var db = new sqlite3.Database('./db/database.db', sqlite3.OPEN_READONLY, (err) => {
       if (err) {
         console.error(err.message);
@@ -54,7 +66,7 @@ var express = require("express"),
     // });
 
 
-
+// EXPRESS MIDDLEWARE
     app.use("/", routes);
 
     app.use(function(req, res, next){
@@ -75,18 +87,7 @@ var express = require("express"),
     });
 
 
-
-
-
-request("https://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=8", function(error, response, body) {
-
-  // If the request is successful (i.e. if the response status code is 200)
-  if (!error && response.statusCode === 200) {
-
-    // Parse the body of the site
-    console.log("movie: " + JSON.parse(body));
-  }
-});
+// LISTENING PORT
 
 var port = process.env.PORT || 3000;
 
