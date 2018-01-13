@@ -4,6 +4,7 @@ const sqlite = require('sqlite'),
   request = require('request'),
   express = require('express'),
   app = express();
+  // getFilmRecommendations = require("./routes");
 
 const {
   PORT = 3000, NODE_ENV = 'development', DB_PATH = './db/database.db'
@@ -30,51 +31,43 @@ Promise.resolve()
 // });
 
 // THIRD PARTY CONNECTION
-request("https://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=8", function(error, response, body) {
-
-  // If the request is successful (i.e. if the response status code is 200)
-  if (!error && response.statusCode === 200) {
-
-    var reviews = JSON.parse(body)[0].reviews,
-        average = 0,
-        newAverage;
-    // criteria -  A minimum of 5 reviews
-    if (reviews.length >= 5) {
-
-      for (var i = 0; i < reviews.length; i++) {
-
-        average += reviews[i].rating;
-      }
-      newAverage = average / reviews.length;
-      console.log("average", newAverage.toFixed(1));
-    }
-    // criteria -  greater than 4.0
-    if(newAverage > 4.0){
-      console.log(newAverage)
-    }
-  }
-});
-
-
-// // SQLITE CONNECTION
-//     var db = new sqlite3.Database('./db/database.db', sqlite3.OPEN_READONLY, (err) => {
-//       if (err) {
-//         console.error(err.message);
+// request("https://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=109", function(error, response, body) {
+//
+//   // If the request is successful (i.e. if the response status code is 200)
+//   if (!error && response.statusCode === 200) {
+//
+//     var reviews = JSON.parse(body)[0].reviews,
+//         average = 0,
+//         newAverage;
+//     // criteria -  A minimum of 5 reviews
+//     if (reviews.length >= 5) {
+//
+//       for (var i = 0; i < reviews.length; i++) {
+//
+//         average += reviews[i].rating;
 //       }
-//       console.log('Connected to the sqlite database.');
-//     });
-//
-//
-//   let sql = `SELECT * FROM films LEFT JOIN genres on (films.genre_id = genres.id) WHERE films.id = 10306`;
-//
-//     db.all(sql,[],(err, rows ) => {
-//         // process rows here
-//         if (err) {
-//    throw err;
-//  }
-//         console.log(JSON.stringify(rows, null, 2));
-//     });
-//
+//       newAverage = average / reviews.length;
+//       console.log("average", newAverage.toFixed(1));
+//     }
+//     // criteria -  greater than 4.0
+//     if(newAverage > 4.0){
+//       console.log(newAverage)
+//     }
+//   }
+// });
+
+
+// SQLITE CONNECTION
+    var db = new sqlite3.Database('./db/database.db', sqlite3.OPEN_READONLY, (err) => {
+      if (err) {
+        console.error(err.message);
+      }
+      console.log('Connected to the sqlite database.');
+    });
+
+
+
+
 
 
 // ROUTES
@@ -85,9 +78,32 @@ app.get('/films/:id/recommendations', getFilmRecommendations);
 // ROUTE HANDLER
 function getFilmRecommendations(req, res) {
 
-  res.status(200).json({
-    response: "You sent me a GET request - 200"
-  })
+
+
+      let sql = `SELECT * from films
+      LEFT JOIN genres on (films.genre_id = genres.id)
+      WHERE films.genre_id = (SELECT genre_id from films
+        WHERE films.id = `;
+
+
+         db.all(sql + req.params.id + ')',[],(err, rows ) => {
+             // process rows here
+             if (err) {
+        throw err;
+      }
+      console.log("req Param works", JSON.stringify(rows, null, 2));
+
+
+         });
+
+         // console.log(rows);
+         // res.status(200).json({
+         //
+         //   recommendations: "You sent me a GET request - 200",
+         //   response: rows,
+         //
+         //
+         // })
   // res.status(500).send('Not Implemented');
 }
 
