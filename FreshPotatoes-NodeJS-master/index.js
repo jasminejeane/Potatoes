@@ -91,7 +91,8 @@ function getFilmRecommendations(req, res) {
              if (err) {
         throw err;
       }
-      console.log("req Param works", JSON.stringify(rows, null, 2));
+      // console.log("req Param works", JSON.stringify(rows, null, 2));
+      res.json({ "count" : rows });
 
 
          });
