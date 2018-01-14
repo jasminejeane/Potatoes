@@ -88,7 +88,7 @@ app.get('/films/:id/recommendations', getFilmRecommendations);
 function getFilmRecommendations(req, res) {
 
   thirdPartyReq(req.params.id);
-  console.log("newAverage", newAverage);
+  // console.log("newAverage", newAverage);
 
   let sql = `SELECT films.id, films.title, films.release_date,
             genres.name from films LEFT JOIN genres on
