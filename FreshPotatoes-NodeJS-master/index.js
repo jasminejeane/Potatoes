@@ -83,6 +83,12 @@ var db = new sqlite3.Database('./db/database.db', sqlite3.OPEN_READONLY, (err) =
 app.get('/films/:id/recommendations', getFilmRecommendations);
 
 
+// 1. grab all genres associated with input id [check]
+// (then) iterate through all returned items
+  // for in --- and run the thrid part function on each
+    // if passes third part tests
+    // res.json those films
+    // add average and #reviews to res.json
 
 // ROUTE HANDLER
 function getFilmRecommendations(req, res) {
@@ -90,6 +96,7 @@ function getFilmRecommendations(req, res) {
   thirdPartyReq(req.params.id);
   // console.log("newAverage", newAverage);
 
+var queryDB = new Promise(function(resolve, reject){
   let sql = `SELECT films.id, films.title, films.release_date,
             genres.name from films LEFT JOIN genres on
             (films.genre_id = genres.id)
@@ -103,11 +110,19 @@ function getFilmRecommendations(req, res) {
       throw err;
     }
     // console.log("req Param works", JSON.stringify(rows, null, 2));
+    resolve(rows);
+    // res.json({
+    //   recommendations: rows
+    // });
+  })
 
-    res.json({
-      recommendations: rows
-    });
-  });
+  }).then(function(rows){
+    console.log("rows from then", JSON.stringify(rows, null, 2));
+
+
+  })
+
+  ;
 };
 
 // console.log(rows);
