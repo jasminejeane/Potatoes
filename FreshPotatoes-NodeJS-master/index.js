@@ -119,7 +119,12 @@ var queryDB = new Promise(function(resolve, reject){
   }).then(function(rows){
     // console.log("rows from then", JSON.stringify(rows, null, 2));
       rows.forEach(function(item){
-        console.log("then item", item);
+        console.log("then key id ", item.id);
+
+        // for (var key in item){
+        //   console.log("then key id ", key[id]);
+        //
+        // }
       })
 
   })
