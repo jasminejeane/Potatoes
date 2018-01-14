@@ -117,15 +117,16 @@ var queryDB = new Promise(function(resolve, reject){
   })
 
   }).then(function(rows){
-    console.log("rows from then", JSON.stringify(rows, null, 2));
-
+    // console.log("rows from then", JSON.stringify(rows, null, 2));
+      rows.forEach(function(item){
+        console.log("then item", item);
+      })
 
   })
 
   ;
 };
 
-// console.log(rows);
 // res.status(200).json({
 //
 //   recommendations: "You sent me a GET request - 200",
