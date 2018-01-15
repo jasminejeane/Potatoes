@@ -181,7 +181,7 @@ function getFilmRecommendations(req, res) {
               rating += newSet[i][j].rating;
             }
             // console.log("rating total", rating);
-            groupRating.push((rating / newSet[i].length)toFixed(1));
+            groupRating.push((rating / newSet[i].length).toFixed(1));
             i++
           }
 
