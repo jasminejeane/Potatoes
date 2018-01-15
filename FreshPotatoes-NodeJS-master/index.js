@@ -20,8 +20,8 @@ Promise.resolve()
 
 function thirdPartyReq(id) {
   var url = "https://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=" + id;
-console.log("id", id);
-console.log("url", url);
+// console.log("id", id);
+// console.log("url", url);
 
   request(url,
     function(error, response, body) {
@@ -36,7 +36,7 @@ console.log("url", url);
       // If the request is successful (i.e. if the response status code is 200)
       if (!error && response.statusCode === 200) {
 
-        console.log(body);
+        // console.log(body);
         reviews = JSON.parse(body)[0].reviews;
         // criteria -  A minimum of 5 reviews
         if (reviews.length >= 5) {
@@ -82,6 +82,9 @@ var db = new sqlite3.Database('./db/database.db', sqlite3.OPEN_READONLY, (err) =
 // ROUTES
 app.get('/films/:id/recommendations', getFilmRecommendations);
 
+// express middleware optional params
+// or another route for the limit and offset
+
 
 // 1. grab all genres associated with input id [check]
 // (then) iterate through all returned items
@@ -121,13 +124,17 @@ var queryDB = new Promise(function(resolve, reject){
     var movieIDs = []
       rows.forEach(function(item){
 
-        ids.push(item.id);
+        movieIDs.push(item.id);
         // console.log("then key id ", item.id);
       })
-      resolve(movieIDs);
+      return movieIDs;
+      // resolve(movieIDs);
   }).then(function(ids){
 
     console.log("ids from third then", ids);
+  }).catch(function(e){
+
+    console.error("There was an error", e);
   })
 
 
