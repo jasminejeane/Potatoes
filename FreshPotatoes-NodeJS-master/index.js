@@ -130,7 +130,7 @@ var queryDB = new Promise(function(resolve, reject){
   }).then(function(ids){
 
 
-    var url = "https://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=" + id;
+    var url = "https://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=" + ids;
 
 
     request(url,
