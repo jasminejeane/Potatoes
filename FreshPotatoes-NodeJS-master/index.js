@@ -187,6 +187,20 @@ function getFilmRecommendations(req, res) {
 
           console.log("rating total", groupRating);
 
+          var yes = [];
+          groupRating.forEach(function(avg){
+
+              if (avg > 4.0){
+                yes.push(avg);
+              }
+          })
+
+console.log("yes", yes);
+
+// now I have the average and total Reviews
+// I have to connect the reviews to the id
+
+// i think the ids need to be stored in a hash connected to __
           // expected output: 10
           // for each film [array returned from movieIDs] in body
           //
