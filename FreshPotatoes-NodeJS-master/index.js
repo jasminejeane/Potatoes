@@ -124,7 +124,10 @@ function getFilmRecommendations(req, res) {
   var queryDB = new Promise(function(resolve, reject) {
 
     var offset = parseInt(req.query.offset, 10);
-    if (isNaN(offset) || offset < 1) {
+    if (isNaN(offset)) {
+      res.status(422).send("Unprocessable Entity, got 400 Bad Request");
+
+    }else if (offset < 1) {
       offset = 0;
     }
 
@@ -214,6 +217,5 @@ function getFilmRecommendations(req, res) {
 //
 //
 // })
-// res.status(500).send('Not Implemented');
 // https://gist.github.com/dalelane/6ce08b52d5cca8f92926
 module.exports = app;
