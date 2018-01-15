@@ -157,13 +157,13 @@ function getFilmRecommendations(req, res) {
             reviews.push(item.reviews);
           });
 
-            var newSet = []
+          var newSet = []
           // each movie review set
           for (var i = 0; i < reviews.length; i++) {
             // this gives me the set of reviews for each movie
             // adding .length gives length of each movie
             // console.log("reviews ids", reviews[i]);
-            if (reviews[i].length >= 5){
+            if (reviews[i].length >= 5) {
               newSet.push(reviews[i]);
             }
             // another forEach on each reviews[i]
@@ -171,22 +171,23 @@ function getFilmRecommendations(req, res) {
           }
 
           // console.log("newSet", newSet[0][0].id);
-// calculating ratings\
+          // calculating ratings\
 
-var groupRating = [];
+          var groupRating = [];
           for (var i = 0; i < newSet.length;) {
             var rating = 0;
             for (var j = 0; j < newSet[i].length; j++) {
 
-                rating += newSet[i][j].rating;
-              }
-              // console.log("rating total", rating);
-              groupRating.push(rating);
-              i++
+              rating += newSet[i][j].rating;
             }
+            // console.log("rating total", rating);
+            groupRating.push((rating / newSet[i].length)toFixed(1));
+            i++
+          }
 
-            console.log("rating total", groupRating.length);
+          console.log("rating total", groupRating);
 
+          // expected output: 10
           // for each film [array returned from movieIDs] in body
           //
           // reviews.forEach(function(review){
