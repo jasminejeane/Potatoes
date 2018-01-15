@@ -152,10 +152,16 @@ function getFilmRecommendations(req, res) {
 
           // entire review body
           var reviews = [];
-          body.forEach(function(item) {
 
-            reviews.push(item.reviews);
-          });
+          for (var i = 0; i < body.length; i++){
+
+            reviews.push(body[i].reviews);
+
+          }
+          // body.forEach(function(item) {
+          //
+          //   reviews.push(item.reviews);
+          // });
 
           var newSet = []
           // each movie review set
