@@ -151,47 +151,49 @@ function getFilmRecommendations(req, res) {
 
 
           // entire review body
-          var reviews = [];
+          var reviews = [],
+              filmIDs = {};
+
 
           for (var i = 0; i < body.length; i++){
 
             reviews.push(body[i].reviews);
 
+            filmIDs[body[i].film_id] = i;
           }
-          // body.forEach(function(item) {
-          //
-          //   reviews.push(item.reviews);
-          // });
 
-          var newSet = []
+          var newSetHash = {},
+              newSet = [];
           // each movie review set
+
           for (var i = 0; i < reviews.length; i++) {
             // this gives me the set of reviews for each movie
             // adding .length gives length of each movie
-            // console.log("reviews ids", reviews[i]);
+            //
+
+
             if (reviews[i].length >= 5) {
               newSet.push(reviews[i]);
+              newSetHash[reviews[i]] = i;
+
             }
-            // another forEach on each reviews[i]
-            // console.log("reviews rating", );
           }
 
-          // console.log("newSet", newSet[0][0].id);
-          // calculating ratings\
-
-          var groupRating = [];
+          var groupRating = [],
+              groupHash = {};
           for (var i = 0; i < newSet.length;) {
             var rating = 0;
             for (var j = 0; j < newSet[i].length; j++) {
 
               rating += newSet[i][j].rating;
+              
             }
-            // console.log("rating total", rating);
-            groupRating.push((rating / newSet[i].length).toFixed(1));
+            var num = (rating / newSet[i].length).toFixed(1);
+            groupRating.push(num);
+
             i++
           }
 
-          console.log("rating total", groupRating);
 
           var yes = [];
           groupRating.forEach(function(avg){
@@ -201,7 +203,7 @@ function getFilmRecommendations(req, res) {
               }
           })
 
-console.log("yes", yes);
+// console.log("yes", yes);
 
 // now I have the average and total Reviews
 // I have to connect the reviews to the id
