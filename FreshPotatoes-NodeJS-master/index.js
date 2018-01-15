@@ -82,6 +82,25 @@ var db = new sqlite3.Database('./db/database.db', sqlite3.OPEN_READONLY, (err) =
 // ROUTES
 app.get('/films/:id/recommendations', getFilmRecommendations);
 
+
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next){
+	var err = new Error("Not Found");
+	err.status = 404;
+	next(err);
+});
+
+// Error Handler
+
+app.use(function(err, req, res, next){
+	res.status(err.status || 500);
+	res.json({
+		error: {
+			message: err.message
+		}
+	});
+});
 // express middleware optional params
 // or another route for the limit and offset
 
@@ -96,10 +115,31 @@ app.get('/films/:id/recommendations', getFilmRecommendations);
 // ROUTE HANDLER
 function getFilmRecommendations(req, res) {
 
-  thirdPartyReq(req.params.id);
+
+
+  // thirdPartyReq(req.params.id);
   // console.log("newAverage", newAverage);
 
+
   var queryDB = new Promise(function(resolve, reject) {
+
+    var offset = parseInt(req.query.offset, 10);
+    if (isNaN(offset) || offset < 1) {
+      offset = 0;
+    }
+
+    var limit = parseInt(req.query.limit, 10);
+    if (isNaN(limit)) {
+      limit = 10;
+    } else if (limit > 50) {
+      limit = 50;
+    } else if (limit < 1) {
+      limit = 1;
+    }
+
+
+
+
     let sql = `SELECT films.id, films.title, films.release_date,
             genres.name from films LEFT JOIN genres on
             (films.genre_id = genres.id)
@@ -107,138 +147,59 @@ function getFilmRecommendations(req, res) {
             WHERE films.id = `;
 
 
-    db.all(sql + req.params.id + ')', [], (err, rows) => {
+    db.all(sql + req.params.id + ") LIMIT " + limit , [], (err, rows) => {
       // process rows here
       if (err) {
-        throw err;
+        res.status(400).send( {"message" : 404});
+
+        res.status(500).send('Not Implemented');
       }
       // console.log("req Param works", JSON.stringify(rows, null, 2));
-      resolve(rows);
-      // res.json({
-      //   recommendations: rows
-      // });
+      // resolve(rows);
+      res.json({
+        recommendations: rows,
+        meta: {
+          limit: limit,
+          offset: 0
+        }
+      });
     })
 
-  }).then(function(rows) {
+  })
+  // .then(function(rows) {
     // console.log("rows from then", JSON.stringify(rows, null, 2));
-    var movieIDs = []
-    rows.forEach(function(item) {
-
-      movieIDs.push(item.id);
-    })
-    return movieIDs;
-  }).then(function(ids) {
 
 
-    var url = "https://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=" + ids;
+    // res.json({
+    //   recommendations: rows
+    // recommendations: {
+    //   id: item.id,
+    //   title: item.title,
+    //   releaseDate: item.release_date,
+    // },
+    // meta:{
+    //   limit: 10,
+    //   offset: 0
+    // },
+    // error: {
+    //   message: "Return an explicit error here"
+    // }
+    // })
 
 
-    request(url,
-      function(error, response, body) {
+    // return movie ids for third party
+    //
+    // var movieIDs = []
+    // rows.forEach(function(item) {
+    //
+    //   movieIDs.push(item.id);
+    // })
+    //
+    // // return movie ids for third party
+    // return rows, movieIDs;
 
-        if (error) {
-          console.error(error);
-        }
-
-        // var reviews,
-        //   average = 0,
-        //   newAverage;
-        // If the request is successful (i.e. if the response status code is 200)
-        if (!error && response.statusCode === 200) {
-
-
-          var body = JSON.parse(body);
-
-
-          // entire review body
-          var reviews = [],
-              filmIDs = {};
-
-
-          for (var i = 0; i < body.length; i++){
-
-            reviews.push(body[i].reviews);
-
-            filmIDs[body[i].film_id] = i;
-          }
-
-          var newSetHash = {},
-              newSet = [];
-          // each movie review set
-
-          for (var i = 0; i < reviews.length; i++) {
-            // this gives me the set of reviews for each movie
-            // adding .length gives length of each movie
-            //
-
-
-            if (reviews[i].length >= 5) {
-              newSet.push(reviews[i]);
-              newSetHash[reviews[i]] = i;
-
-            }
-          }
-
-          var groupRating = [],
-              groupHash = {};
-          for (var i = 0; i < newSet.length;) {
-            var rating = 0;
-            for (var j = 0; j < newSet[i].length; j++) {
-
-              rating += newSet[i][j].rating;
-              
-            }
-            var num = (rating / newSet[i].length).toFixed(1);
-            groupRating.push(num);
-
-            i++
-          }
-
-
-          var yes = [];
-          groupRating.forEach(function(avg){
-
-              if (avg > 4.0){
-                yes.push(avg);
-              }
-          })
-
-// console.log("yes", yes);
-
-// now I have the average and total Reviews
-// I have to connect the reviews to the id
-
-// i think the ids need to be stored in a hash connected to __
-          // expected output: 10
-          // for each film [array returned from movieIDs] in body
-          //
-          // reviews.forEach(function(review){
-          //   console.log("rating", review[1]);
-          // })
-          // console.log("reviews", typeof reviews);
-          //   reviews = JSON.parse(body)[0].reviews;
-          //   // criteria -  A minimum of 5 reviews
-          //   if (reviews.length >= 5) {
-          //
-          //     for (var i = 0; i < reviews.length; i++) {
-          //
-          //       average += reviews[i].rating;
-          //     }
-          //     newAverage = average / reviews.length;
-          //     console.log("average before if greater: ", newAverage.toFixed(1));
-          //
-          //   }
-          //
-          //   // criteria -  greater than 4.0
-          //   // criteria -  number of reviews
-          //   if (newAverage > 4.0) {
-          //     console.log("average", newAverage.toFixed(1));
-          //     console.log("number of reviews", reviews.length)
-          //
-          //   }
-        }
-      })
-  }).catch(function(e) {
+  // })
+  .catch(function(e) {
 
     console.error("There was an error", e);
   })
