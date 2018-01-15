@@ -146,7 +146,15 @@ var queryDB = new Promise(function(resolve, reject){
         // If the request is successful (i.e. if the response status code is 200)
         if (!error && response.statusCode === 200) {
 
-          console.log(body);
+
+          var body = JSON.parse(body);
+          var reviews = [];
+          body.forEach(function(item){
+
+            reviews.push(item.reviews);
+          });
+
+          console.log("reviews", reviews);
         //   reviews = JSON.parse(body)[0].reviews;
         //   // criteria -  A minimum of 5 reviews
         //   if (reviews.length >= 5) {
