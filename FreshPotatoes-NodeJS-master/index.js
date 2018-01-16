@@ -222,8 +222,8 @@ if(err){
             "title": rows[i].title,
             "releaseDate": rows[i].release_date,
             "genre": rows[i].name,
-            "averageRating": avg[i],
-            "reviews": reviews[i]
+            "averageRating": avg[i].toString(),
+            "reviews": reviews[i].toString()
           })
         }
         res.json({
