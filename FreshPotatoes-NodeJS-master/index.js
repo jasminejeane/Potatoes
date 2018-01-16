@@ -42,9 +42,9 @@ app.get('/films/:id/recommendations',
     // 5) handles invalid id
     // 6) handles invalid query params
     // correct recs first b4 these can pass
-    // if(isNaN(req.params.id) || isNaN(req.query.limit) || isNaN(req.query.offset) ) {
+    if(isNaN(req.params.id) || isNaN(req.query.limit) || isNaN(req.query.offset) ) {
 
-    if (isNaN(req.params.id)) {
+    // if (isNaN(req.params.id)) {
       var err = new Error("Not Found");
       err.status = 422;
       next(err);
