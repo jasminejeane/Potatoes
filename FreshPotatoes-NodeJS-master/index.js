@@ -105,7 +105,7 @@ function getFilmRecommendations(req, res) {
             WHERE films.id = `;
 
 
-      db.all(sql + req.params.id + ")" ,[], (err, rows) => {
+      db.all(sql + req.params.id + ")", [], (err, rows) => {
 
 
         var movieIDs = [];
@@ -184,13 +184,19 @@ function getFilmRecommendations(req, res) {
               }
             }
             // return keys;
+
+            for (var i = 0; i < keys.length; i++) {
+              if(keys[i] == Object.keys(joinAvg)){
+                console.log(joinAvg[key]);
+              }
+            }
           }
 
         })
 
-      var pizza = [ '7406', '8298', '8451' ],
-      avg = [5, 4.2, 6],
-      reviews = [7, 10, 8];
+      var pizza = ['7406', '8298', '8451'],
+        avg = [5, 4.2, 6],
+        reviews = [7, 10, 8];
       return ([pizza, avg, reviews]);
     }).then(function([keys, avg, reviews]) {
 
@@ -202,34 +208,30 @@ function getFilmRecommendations(req, res) {
             WHERE films.id IN ( `;
 
 
-      // keys.forEach(function(key) {
-        db.all(sql + newKeys + ")", [], (err, rows) => {
+      db.all(sql + newKeys + ")", [], (err, rows) => {
 
-          var newRows = [];
-        // rows.forEach(function(row){
+        var newRows = [];
 
-          for (var i = 0; i < rows.length; i++) {
+        for (var i = 0; i < rows.length; i++) {
 
-        newRows.push(  {
-              "id": rows[i].id,
-              "title": rows[i].title,
-              "releaseDate": rows[i].release_date,
-              "genre": rows[i].name,
-              "averageRating": avg[i],
-              "reviews": reviews[i]
-           })
-}
-// });
-          res.json({
-             recommendations: newRows
-            ,
+          newRows.push({
+            "id": rows[i].id,
+            "title": rows[i].title,
+            "releaseDate": rows[i].release_date,
+            "genre": rows[i].name,
+            "averageRating": avg[i],
+            "reviews": reviews[i]
+          })
+        }
+        res.json({
+          recommendations: newRows,
 
-             meta: {
-               limit: 10,
-               offset: 1
-             }
-           }); // end json response
-        }) // end db query
+          meta: {
+            limit: 10,
+            offset: 1
+          }
+        }); // end json response
+      }) // end db query
 
 
     })
@@ -239,7 +241,7 @@ function getFilmRecommendations(req, res) {
       console.error("There was an error", e);
     })
 
-    db.close();
+  db.close();
 
 };
 
