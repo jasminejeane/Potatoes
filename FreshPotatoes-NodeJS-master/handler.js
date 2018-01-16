@@ -42,19 +42,16 @@ function getFilmRecommendations(req, res) {
             WHERE films.id = `;
 
 
-      db.all(sql + req.params.id + ") LIMIT " + limit , [], (err, rows) => {
+      db.all(sql + req.params.id + ")", [], (err, rows) => {
 
 if(err){
   throw err;
 }
         var movieIDs = [];
-        // rows.forEach(function(item) {
           for (var i = 0; i < rows.length; i++) {
             movieIDs.push(rows[i].id);
 
           }
-                  // })
-
         resolve(movieIDs);
 
       }) // end db query
@@ -103,12 +100,11 @@ if(err){
               groupRating.push((rating / reviews[i].length).toFixed(2));
               reviewAvg[ids[i]] = reviews[i].length;
 
-              i++
+              i++;
             }
 
             var yes = [],
               joinAvg = {};
-
 
             groupRating.forEach(function(avg) {
               yes.push(avg);
@@ -131,8 +127,9 @@ if(err){
 
               }
             }
+            console.log(keys, avg, numReviews);
+
           } // end res 200 if
-          console.log(keys, avg, numReviews);
         })
       var pizza = ['7406', '8298', '8451'],
         // need to have to fixed with no zeros
