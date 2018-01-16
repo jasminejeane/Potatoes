@@ -177,25 +177,25 @@ function getFilmRecommendations(req, res) {
 
             }
 
-            var keys = [];
+
+            var keys = [],
+                avg = [];
             for (var key in joinAvg) {
-              if (joinAvg[key] > 4) {
+              if (joinAvg[key] >= 4) {
                 keys.push(key);
+                avg.push(joinAvg[key]);
+
               }
             }
             // return keys;
+console.log(keys);
 
-            for (var i = 0; i < keys.length; i++) {
-              if(keys[i] == Object.keys(joinAvg)){
-                console.log(joinAvg[key]);
-              }
-            }
-          }
+          } // end res 200 if
 
         })
 
-      var pizza = ['7406', '8298', '8451'],
-        avg = [5, 4.2, 6],
+      var pizza = [ '7406', '8298', '8451', '8762', '9566', '9748' ],
+        avg = [ '4.6', '4.6', '4.3', '4.0', '4.0', '4.0' ],
         reviews = [7, 10, 8];
       return ([pizza, avg, reviews]);
     }).then(function([keys, avg, reviews]) {
