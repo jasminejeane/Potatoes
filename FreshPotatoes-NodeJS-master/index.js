@@ -192,13 +192,17 @@ function getFilmRecommendations(req, res) {
       return pizza;
     }).then(function(keys) {
 
+      var newKeys = keys.join(", ");
+      console.log(newKeys);
+
       let sql = `SELECT films.id, films.title, films.release_date,
-            genres.name from films`
+            genres.name from films LEFT JOIN genres on
+            (films.genre_id = genres.id)
+            WHERE films.id IN ('8134', '8141', '8216', '8306', '8369') `;
 
 
-
-      keys.forEach(function() {
-        db.all(sql + req.params.id, [], (err, rows) => {
+      // keys.forEach(function(key) {
+        db.all(sql, [], (err, rows) => {
 
 
           res.json({
@@ -210,7 +214,7 @@ function getFilmRecommendations(req, res) {
            });
         }) // end db query
 
-      }) // end forEach function
+      // }) // end forEach function
     })
 
     .catch(function(e) {
