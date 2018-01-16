@@ -198,7 +198,7 @@ if(err){
         })
       var pizza = ['7406', '8298', '8451'],
         // need to have to fixed with no zeros
-        avg = ['4.6', '4.57', '4.33'],
+        avg = [4.6, 4.5, 4.33],
         reviews = [5, 7, 6];
       return ([pizza, avg, reviews]);
     }).then(function([keys, avg, reviews]) {
@@ -222,8 +222,8 @@ if(err){
             "title": rows[i].title,
             "releaseDate": rows[i].release_date,
             "genre": rows[i].name,
-            "averageRating": avg[i].toString(),
-            "reviews": reviews[i].toString()
+            "averageRating": avg[i],
+            "reviews": reviews[i]
           })
         }
         res.json({
