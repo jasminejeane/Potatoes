@@ -38,6 +38,8 @@ describe('Recommendations API', function() {
 
       it('has lenght of 3', function() {
         expect(cachedResponse.body.recommendations).to.have.length.of(3);
+
+        console.log("cachedResponse.body.recommendations", cachedResponse.body.recommendations);
       });
     });
 

@@ -83,8 +83,9 @@ var db = new sqlite3.Database('./db/database.db', sqlite3.OPEN_READONLY, (err) =
 app.get('/films/:id/recommendations',
 function(req, res, next){
 
-  // req.param('name')
-		if(isNaN(req.params.id) || isNaN(req.query.limit) || isNaN(req.query.offset) ) {
+  // if(isNaN(req.params.id) || isNaN(req.query.limit) || isNaN(req.query.offset) ) {
+
+		if(isNaN(req.params.id))  {
 			var err = new Error("Not Found");
 			err.status = 422;
 			next(err);
@@ -112,16 +113,7 @@ app.use(function(err, req, res, next){
   });
 
 });
-// express middleware optional params
-// or another route for the limit and offset
 
-
-// 1. grab all genres associated with input id [check]
-// (then) iterate through all returned items
-// for in --- and run the thrid part function on each
-// if passes third part tests
-// res.json those films
-// add average and #reviews to res.json
 
 // ROUTE HANDLER
 function getFilmRecommendations(req, res) {
@@ -135,10 +127,7 @@ function getFilmRecommendations(req, res) {
   var queryDB = new Promise(function(resolve, reject) {
 
     var offset = parseInt(req.query.offset, 10);
-    if (isNaN(offset)) {
-      // res.status(422).send("Unprocessable Entity, got 400 Bad Request");
-
-    }else if (offset < 1) {
+    if (offset < 1) {
       offset = 0;
     }
 
@@ -170,7 +159,7 @@ function getFilmRecommendations(req, res) {
         recommendations: rows,
         meta: {
           limit: limit,
-          offset: 0
+          offset: 1
         }
       });
     })
