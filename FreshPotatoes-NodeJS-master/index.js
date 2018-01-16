@@ -151,52 +151,54 @@ function getFilmRecommendations(req, res) {
             }
 
 
-            var groupRating = [];
+            var groupRating = [],
+              reviewAvg = {};
             for (var i = 0; i < reviews.length;) {
               var rating = 0;
               for (var j = 0; j < reviews[i].length; j++) {
 
                 rating += reviews[i][j].rating;
               }
-              groupRating.push((rating / reviews[i].length).toFixed(1));
+              groupRating.push((rating / reviews[i].length).toFixed(2));
+              reviewAvg[ids[i]] = reviews[i].length;
+
               i++
             }
 
+// console.log(reviewAvg);
+            var yes = [],
+              joinAvg = {};
 
-            var yes = [];
-            var joinAvg = {};
 
             groupRating.forEach(function(avg) {
-
-
               yes.push(avg);
             })
 
             for (var i = 0; i < ids.length; i++) {
               joinAvg[ids[i]] = yes[i];
-
             }
+
 
 
             var keys = [],
-                avg = [];
+                avg = [],
+                numReviews = [];
             for (var key in joinAvg) {
-              if (joinAvg[key] >= 4) {
+              if (joinAvg[key] >= 4 && reviewAvg[key] >= 5) {
                 keys.push(key);
                 avg.push(joinAvg[key]);
+                numReviews.push(reviewAvg[key]);
 
               }
             }
-            // return keys;
-console.log(keys);
-
           } // end res 200 if
 
         })
 
       var pizza = [ '7406', '8298', '8451', '8762', '9566', '9748' ],
-        avg = [ '4.6', '4.6', '4.3', '4.0', '4.0', '4.0' ],
-        reviews = [7, 10, 8];
+      // need to have to fixed with no zeros
+        avg = [ '4.60', '4.57', '4.33', '4.00', '4.00', '4.00' ],
+        reviews = [ 5, 7, 6 ];
       return ([pizza, avg, reviews]);
     }).then(function([keys, avg, reviews]) {
 
