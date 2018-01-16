@@ -36,25 +36,25 @@ function getFilmRecommendations(req, res) {
 
 
       let sql = `SELECT films.id, films.title, films.release_date,
-            genres.name from films LEFT JOIN genres on
-            (films.genre_id = genres.id)
-            WHERE films.genre_id = (SELECT genre_id from films
-            WHERE films.id = `;
+genres.name from films LEFT JOIN genres on
+(films.genre_id = genres.id)
+WHERE films.genre_id = (SELECT genre_id from films
+WHERE films.id = `;
 
 
       db.all(sql + req.params.id + ")", [], (err, rows) => {
 
-if(err){
-  throw err;
-}
+        if (err) {
+          throw err;
+        }
         var movieIDs = [];
-          for (var i = 0; i < rows.length; i++) {
-            movieIDs.push(rows[i].id);
+        for (var i = 0; i < rows.length; i++) {
+          movieIDs.push(rows[i].id);
 
-          }
+        }
         resolve(movieIDs);
 
-      }) // end db query
+      }); // end db query
 
     })
 
@@ -108,7 +108,7 @@ if(err){
 
             groupRating.forEach(function(avg) {
               yes.push(avg);
-            })
+            });
 
             for (var i = 0; i < ids.length; i++) {
               joinAvg[ids[i]] = yes[i];
@@ -130,7 +130,7 @@ if(err){
             console.log(keys, avg, numReviews);
 
           } // end res 200 if
-        })
+        });
       var pizza = ['7406', '8298', '8451'],
         // need to have to fixed with no zeros
         avg = ['4.6', '4.57', '4.33'],
@@ -141,9 +141,9 @@ if(err){
       var newKeys = keys.join(", ");
 
       let sql = `SELECT films.id, films.title, films.release_date,
-            genres.name from films LEFT JOIN genres on
-            (films.genre_id = genres.id)
-            WHERE films.id IN ( `;
+genres.name from films LEFT JOIN genres on
+(films.genre_id = genres.id)
+WHERE films.id IN ( `;
 
 
       db.all(sql + newKeys + ")", [], (err, rows) => {
@@ -159,7 +159,7 @@ if(err){
             "genre": rows[i].name,
             "averageRating": avg[i],
             "reviews": reviews[i]
-          })
+          });
         }
         res.json({
           recommendations: newRows,
@@ -169,7 +169,7 @@ if(err){
             offset: 1
           }
         }); // end json response
-      }) // end db query
+      }); // end db query
 
 
     })
@@ -177,12 +177,7 @@ if(err){
     .catch(function(e) {
 
       console.error("There was an error", e);
-    })
-
-  // db.close();
-
+    });
 };
-  // db.close();
 
-// };
 module.exports.getFilmRecommendations = getFilmRecommendations;
