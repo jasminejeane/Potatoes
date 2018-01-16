@@ -193,16 +193,15 @@ function getFilmRecommendations(req, res) {
     }).then(function(keys) {
 
       var newKeys = keys.join(", ");
-      console.log(newKeys);
 
       let sql = `SELECT films.id, films.title, films.release_date,
             genres.name from films LEFT JOIN genres on
             (films.genre_id = genres.id)
-            WHERE films.id IN ('8134', '8141', '8216', '8306', '8369') `;
+            WHERE films.id IN ( `;
 
 
       // keys.forEach(function(key) {
-        db.all(sql, [], (err, rows) => {
+        db.all(sql + newKeys + ")", [], (err, rows) => {
 
 
           res.json({
