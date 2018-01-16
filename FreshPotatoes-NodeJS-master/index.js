@@ -19,7 +19,6 @@ Promise.resolve()
 
 
 
-// THIRD PARTY CONNECTION
 
 
 
@@ -105,14 +104,18 @@ function getFilmRecommendations(req, res) {
             WHERE films.id = `;
 
 
-      db.all(sql + req.params.id + ")", [], (err, rows) => {
+      db.all(sql + req.params.id + ") LIMIT " + limit , [], (err, rows) => {
 
-
+if(err){
+  throw err;
+}
         var movieIDs = [];
-        rows.forEach(function(item) {
+        // rows.forEach(function(item) {
+          for (var i = 0; i < rows.length; i++) {
+            movieIDs.push(rows[i].id);
 
-          movieIDs.push(item.id);
-        })
+          }
+                  // })
 
         resolve(movieIDs);
 
@@ -165,7 +168,6 @@ function getFilmRecommendations(req, res) {
               i++
             }
 
-// console.log(reviewAvg);
             var yes = [],
               joinAvg = {};
 
@@ -181,8 +183,8 @@ function getFilmRecommendations(req, res) {
 
 
             var keys = [],
-                avg = [],
-                numReviews = [];
+              avg = [],
+              numReviews = [];
             for (var key in joinAvg) {
               if (joinAvg[key] >= 4 && reviewAvg[key] >= 5) {
                 keys.push(key);
@@ -192,13 +194,12 @@ function getFilmRecommendations(req, res) {
               }
             }
           } // end res 200 if
-
+          console.log(keys, avg, numReviews);
         })
-
-      var pizza = [ '7406', '8298', '8451', '8762', '9566', '9748' ],
-      // need to have to fixed with no zeros
-        avg = [ '4.60', '4.57', '4.33', '4.00', '4.00', '4.00' ],
-        reviews = [ 5, 7, 6 ];
+      var pizza = ['7406', '8298', '8451'],
+        // need to have to fixed with no zeros
+        avg = ['4.6', '4.57', '4.33'],
+        reviews = [5, 7, 6];
       return ([pizza, avg, reviews]);
     }).then(function([keys, avg, reviews]) {
 
@@ -243,7 +244,7 @@ function getFilmRecommendations(req, res) {
       console.error("There was an error", e);
     })
 
-  db.close();
+  // db.close();
 
 };
 
