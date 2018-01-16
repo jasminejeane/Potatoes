@@ -84,15 +84,9 @@ app.get('/films/:id/recommendations',
 function(req, res, next){
 
   // req.param('name')
-		if(isNaN(req.params.id)) {
+		if(isNaN(req.params.id) || isNaN(req.query.limit) || isNaN(req.query.offset) ) {
 			var err = new Error("Not Found");
 			err.status = 422;
-      console.log("NAN");
-
-      // res.json({
-    	// 		message: 422
-    	// });
-console.log("param id", req.params.id);
 			next(err);
 		} else {
 			next();
