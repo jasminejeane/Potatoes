@@ -13,9 +13,16 @@ Promise.resolve()
     if (NODE_ENV === 'development') console.error(err.stack);
   });
 
+
 // ROUTES
 app.get('/films/:id/recommendations',
   function(req, res, next) {
+
+    // 5) handles invalid id
+    // 6) handles invalid query params
+    // correct recs first b4 these can pass
+    // if(isNaN(req.params.id) || isNaN(req.query.limit) || isNaN(req.query.offset) ) {
+
     if (isNaN(req.params.id)) {
       var err = new Error('Not Found');
       err.status = 422;
@@ -36,9 +43,12 @@ app.use(function(req, res, next) {
 // handles missing routes
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
+
   res.json({
     message: err.message
   });
+
 });
+
 
 module.exports = app;
