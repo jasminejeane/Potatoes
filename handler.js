@@ -16,9 +16,7 @@ var db = new sqlite3.Database('./db/database.db', sqlite3.OPEN_READONLY, (err) =
 
 function getFilmRecommendations(req, res) {
 
-
   var queryDB = new Promise(function(resolve, reject) {
-
       var offset = parseInt(req.query.offset, 10);
       if (offset < 1) {
         offset = 0;
@@ -33,39 +31,28 @@ function getFilmRecommendations(req, res) {
         limit = 1;
       }
 
-
-
       let sql = `SELECT films.id, films.title, films.release_date,
 genres.name from films LEFT JOIN genres on
 (films.genre_id = genres.id)
 WHERE films.genre_id = (SELECT genre_id from films
 WHERE films.id = `;
 
-
       db.all(sql + req.params.id + ")", [], (err, rows) => {
 
         if (err) {
           throw err;
         }
-        var movieIDs = [];
+        var ids = [];
         for (var i = 0; i < rows.length; i++) {
-          movieIDs.push(rows[i].id);
-
+          ids.push(rows[i].id);
         }
-        resolve(movieIDs);
-
+        resolve(ids);
       }); // end db query
-
     })
-
 
     .then(function(ids) {
 
-
       var url = "https://credentials-api.generalassemb.ly/4576f55f-c427-4cfc-a11c-5bfe914ca6c1?films=" + ids;
-
-
-
 
       request(url,
         function(error, response, body) {
@@ -76,18 +63,11 @@ WHERE films.id = `;
 
           if (!error && response.statusCode === 200) {
 
-
             var body = JSON.parse(body);
-
-
             var reviews = [];
-
             for (var i = 0; i < body.length; i++) {
-
               reviews.push(body[i].reviews);
-
             }
-
 
             var groupRating = [],
               reviewAvg = {};
@@ -99,7 +79,6 @@ WHERE films.id = `;
               }
               groupRating.push((rating / reviews[i].length).toFixed(2));
               reviewAvg[ids[i]] = reviews[i].length;
-
               i++;
             }
 
@@ -114,8 +93,6 @@ WHERE films.id = `;
               joinAvg[ids[i]] = yes[i];
             }
 
-
-
             var keys = [],
               avg = [],
               numReviews = [];
@@ -124,58 +101,42 @@ WHERE films.id = `;
                 keys.push(key);
                 avg.push(joinAvg[key]);
                 numReviews.push(reviewAvg[key]);
-
               }
             }
-            console.log(keys, avg, numReviews);
 
+            var newKeys = keys.join(", ");
+
+            let sql = `SELECT films.id, films.title, films.release_date,
+        genres.name from films LEFT JOIN genres on
+        (films.genre_id = genres.id)
+        WHERE films.id IN ( `;
+
+            db.all(sql + newKeys + ")", [], (err, rows) => {
+              var newRows = [];
+              for (var i = 0; i < rows.length; i++) {
+
+                newRows.push({
+                  "id": rows[i].id,
+                  "title": rows[i].title,
+                  "releaseDate": rows[i].release_date,
+                  "genre": rows[i].name,
+                  "averageRating": avg[i],
+                  "reviews": numReviews[i]
+                });
+              }
+              res.json({
+                recommendations: newRows,
+
+                meta: {
+                  limit: 10,
+                  offset: 1
+                }
+              }); // end json response
+            }); // end db query
           } // end res 200 if
         });
-      var pizza = ['7406', '8298', '8451'],
-        // need to have to fixed with no zeros
-        avg = ['4.6', '4.57', '4.33'],
-        reviews = [5, 7, 6];
-      return ([pizza, avg, reviews]);
-    }).then(function([keys, avg, reviews]) {
-
-      var newKeys = keys.join(", ");
-
-      let sql = `SELECT films.id, films.title, films.release_date,
-genres.name from films LEFT JOIN genres on
-(films.genre_id = genres.id)
-WHERE films.id IN ( `;
-
-
-      db.all(sql + newKeys + ")", [], (err, rows) => {
-
-        var newRows = [];
-
-        for (var i = 0; i < rows.length; i++) {
-
-          newRows.push({
-            "id": rows[i].id,
-            "title": rows[i].title,
-            "releaseDate": rows[i].release_date,
-            "genre": rows[i].name,
-            "averageRating": avg[i],
-            "reviews": reviews[i]
-          });
-        }
-        res.json({
-          recommendations: newRows,
-
-          meta: {
-            limit: 10,
-            offset: 1
-          }
-        }); // end json response
-      }); // end db query
-
-
     })
-
     .catch(function(e) {
-
       console.error("There was an error", e);
     });
 };
