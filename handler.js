@@ -1,4 +1,4 @@
-const sqlite = require('sqlite'),
+{const sqlite = require('sqlite'),
   sqlite3 = require('sqlite3').verbose(),
   request = require('request');
 
@@ -11,31 +11,16 @@ var db = new sqlite3.Database('./db/database.db', sqlite3.OPEN_READONLY, (err) =
   console.log('Connected to the sqlite database.');
 });
 
-
 // ROUTE HANDLER
 
 function getFilmRecommendations(req, res) {
 
   var queryDB = new Promise(function(resolve, reject) {
-      var offset = parseInt(req.query.offset, 10);
-      if (offset < 1) {
-        offset = 0;
-      }
-
-      var limit = parseInt(req.query.limit, 10);
-      if (isNaN(limit)) {
-        limit = 10;
-      } else if (limit > 50) {
-        limit = 50;
-      } else if (limit < 1) {
-        limit = 1;
-      }
-
       let sql = `SELECT films.id, films.title, films.release_date,
-genres.name from films LEFT JOIN genres on
-(films.genre_id = genres.id)
-WHERE films.genre_id = (SELECT genre_id from films
-WHERE films.id = `;
+                genres.name from films LEFT JOIN genres on
+                (films.genre_id = genres.id)
+                WHERE films.genre_id = (SELECT genre_id from films
+                WHERE films.id = `;
 
       db.all(sql + req.params.id + ")", [], (err, rows) => {
 
@@ -82,15 +67,15 @@ WHERE films.id = `;
               i++;
             }
 
-            var yes = [],
+            var avgArr = [],
               joinAvg = {};
 
             groupRating.forEach(function(avg) {
-              yes.push(avg);
+              avgArr.push(avg);
             });
 
             for (var i = 0; i < ids.length; i++) {
-              joinAvg[ids[i]] = yes[i];
+              joinAvg[ids[i]] = avgArr[i];
             }
 
             var keys = [],
@@ -107,9 +92,9 @@ WHERE films.id = `;
             var newKeys = keys.join(", ");
 
             let sql = `SELECT films.id, films.title, films.release_date,
-        genres.name from films LEFT JOIN genres on
-        (films.genre_id = genres.id)
-        WHERE films.id IN ( `;
+                      genres.name from films LEFT JOIN genres on
+                      (films.genre_id = genres.id)
+                      WHERE films.id IN ( `;
 
             db.all(sql + newKeys + ")", [], (err, rows) => {
               var newRows = [];
@@ -141,4 +126,4 @@ WHERE films.id = `;
     });
 };
 
-module.exports.getFilmRecommendations = getFilmRecommendations;
+module.exports.getFilmRecommendations = getFilmRecommendations;}
